@@ -161,9 +161,11 @@ class CodeforcesProblem(onlinejudge.type.Problem):
         resp.raise_for_status()
         # result
         if resp.url.endswith('/my'):
-            # example: https://codeforces.com/contest/598/my
-            log.success('success: result: %s', resp.url)
-            return utils.DummySubmission(resp.url, problem=self)
+            # example: https://codeforces.com/contest/1132/submission/58883331
+            soup = bs4.BeautifulSoup(resp.content.decode(resp.encoding), utils.html_parser)
+            url_submission = 'https://codeforces.com' + soup.find('a', class_='view-source')['href']
+            log.success('success: result: %s', url_submission)
+            return utils.DummySubmission(url_submission, problem=self)
         else:
             log.failure('failure')
             # parse error messages
@@ -206,6 +208,21 @@ class CodeforcesProblem(onlinejudge.type.Problem):
                     return cls(int(m.group(1)), index, kind=kind)
         return None
 
+    def get_name(self, session: Optional[requests.Session] = None) -> str:
+        session = session or utils.get_default_session()
+        # get
+        resp = utils.request('GET', self.get_url(), session=session)
+        # parse
+        soup = bs4.BeautifulSoup(resp.content.decode(resp.encoding), utils.html_parser)
+        return soup.find('div', class_='title').string.split(' ', 1)[1]
+
+    def get_contest_name(self, session: Optional[requests.Session] = None) -> str:
+        session = session or utils.get_default_session()
+        # get
+        resp = utils.request('GET', self.get_url(), session=session)
+        # parse
+        soup = bs4.BeautifulSoup(resp.content.decode(resp.encoding), utils.html_parser)
+        return soup.find('table', class_='rtable').tbody.tr.th.a.string
 
 onlinejudge.dispatch.services += [CodeforcesService]
 onlinejudge.dispatch.problems += [CodeforcesProblem]
