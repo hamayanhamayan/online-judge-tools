@@ -12,6 +12,7 @@ import urllib.parse
 from typing import *
 
 import bs4
+import re
 
 import onlinejudge._implementation.logging as log
 import onlinejudge._implementation.testcase_zipper
@@ -417,6 +418,15 @@ class YukicoderProblem(onlinejudge.type.Problem):
             if h4.string == '入力':
                 return h4.parent.find('pre').decode_contents(formatter=None)
         return None
+
+    def get_name(self, session: Optional[requests.Session] = None) -> str:
+        session = session or utils.get_default_session()
+        # get
+        resp = utils.request('GET', self.get_url(), session=session)
+        # parse
+        soup = bs4.BeautifulSoup(resp.content.decode(resp.encoding), utils.html_parser)
+        title = soup.find('title').string
+        return re.search(r"\s*No.([0-9]+)\s*(.+)\s-\syukicoder", title)[2]
 
 
 onlinejudge.dispatch.services += [YukicoderService]

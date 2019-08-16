@@ -59,6 +59,10 @@ class YukicoderProblemTest(unittest.TestCase):
             TestCase(name='sample-2', input_name='サンプル2 入力', input_data=b'2\n-1 1\n3\n-1 1 -1\n', output_name='サンプル2 出力', output_data=b'-1 1\n'),
         ])
 
+    def test_load_problem_names(self):
+        self.assertEqual(YukicoderProblem.from_url('https://yukicoder.me/problems/no/815').get_name(), 'Are you a traveller ?')
+        self.assertEqual(YukicoderProblem.from_url('https://yukicoder.me/problems/no/775').get_name(), 'tatyamと素数大富豪(hard)')
+        self.assertEqual(YukicoderProblem.from_url('https://yukicoder.me/problems/no/618').get_name(), 'labo-index')
 
 class YukicoderOfficialAPITest(unittest.TestCase):
     def test_get_user_10(self):
