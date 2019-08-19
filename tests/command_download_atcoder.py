@@ -131,3 +131,16 @@ class DownloadAtCoderTest(unittest.TestCase):
 
     def test_call_download_invalid_url(self):
         self.snippet_call_download_raises(requests.exceptions.HTTPError, 'http://abc001.contest.atcoder.jp/tasks/abc001_100')
+
+    def test_call_download_atcoder_tkppc4_2_b(self):
+        self.snippet_call_download('https://atcoder.jp/contests/tkppc4-2/tasks/tkppc4_2_b', {
+            'sample-1.in': '3e25d52838223451b35ade0a58a7c699',
+            'sample-1.out': '3ae2ea0c3867b219ef54d914437e76be',
+            'sample-2.in': 'd3f2c94f21a4b4cdf41b266977d34829',
+            'sample-2.out': '3ae2ea0c3867b219ef54d914437e76be',
+            'sample-3.in': '39790796cb638de6e530ad1d3cbef6cf',
+            'sample-3.out': 'ca9d47ab9260f38fad6ff7fda74f23c1'
+        })
+
+if __name__ == '__main__':
+    unittest.main()

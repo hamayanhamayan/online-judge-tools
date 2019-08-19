@@ -419,8 +419,11 @@ def _AtCoderProblemContent_get_tag_lang(tag: bs4.Tag):
 
 def _AtCoderProblemContent_find_sample_tags(soup: bs4.BeautifulSoup) -> Generator[Tuple[bs4.Tag, bs4.Tag], None, None]:
     for pre in soup.find_all('pre'):
-        log.debug('pre tag: %s', str(pre))
-        if not pre.string:
+        strpre = str(pre)
+        log.debug('pre tag: %s', strpre)
+        if '<var>' in strpre:
+            continue
+        if not str(pre)[5:-6]:
             continue
 
         def h3_plus(tag):
@@ -443,7 +446,10 @@ def _AtCoderProblemContent_parse_sample_cases(soup: bs4.BeautifulSoup) -> List[o
     samples = onlinejudge._implementation.testcase_zipper.SampleZipper()
     lang = None
     for pre, h3 in _AtCoderProblemContent_find_sample_tags(soup):
-        s = utils.textfile(utils.dos2unix(pre.string.lstrip()))
+        case = pre.string
+        if not case:
+            case = str(pre)[5:-6].replace('<br/>', '\n')
+        s = utils.textfile(utils.dos2unix(case.lstrip()))
         name = h3.string
         l = _AtCoderProblemContent_get_tag_lang(pre)
         if lang is None:
